@@ -1,15 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-  ],
-  base: './', // Ensures assets load correctly in the Word Taskpane
+  plugins: [react()],
+  server: {
+    port: 3000,
+    open: true,
+    host: true,
+    cors: true
+  },
+  base: './',
   build: {
     outDir: 'dist',
+    sourcemap: true,
+    emptyOutDir: true
   }
-}) // Added the missing closing brace and parenthesis here
+})

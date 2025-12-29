@@ -1,120 +1,271 @@
-import React, { useState } from 'react';
-import 'boxicons/css/boxicons.min.css';
-
-/* global Word */
+import React, { useState, useEffect } from 'react'
+import 'boxicons/css/boxicons.min.css'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [status, setStatus] = useState("System Ready");
+  const [status, setStatus] = useState('🚀 Initializing Word Automator AI...')
+  const [activeTab, setActiveTab] = useState('home')
+  const [selectedText, setSelectedText] = useState('')
+  const [isWordOnline, setIsWordOnline] = useState(false)
+  
+  const documentContent = [
+    "# Welcome to Word Automator AI",
+    "Select text and use AI tools below:",
+    "",
+    "This is a demonstration of AI-powered document automation.",
+    "Features include:",
+    "• Auto-correction of grammar and spelling",
+    "• Template generation",
+    "• Text summarization",
+    "• Style analysis",
+    "",
+    "Try selecting any text above and clicking an AI tool!"
+  ]
 
-  const handleAction = async (actionType) => {
-    setStatus("AI is thinking...");
-    try {
-      await Word.run(async (context) => {
-        const selection = context.document.getSelection();
-        selection.load("text");
-        await context.sync();
-
-        const response = await fetch("https://word-automator-backend.onrender.com", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: actionType, text: selection.text })
-        });
-        const data = await response.json();
-
-        if (data.type === "template") {
-          context.document.body.insertText(data.title + "\n", "Start");
-          context.document.body.insertParagraph(data.content, "End");
-        } else {
-          selection.insertText(data.result, "Replace");
-        }
-
-        await context.sync();
-        setStatus("Process Complete");
-      });
-    } catch (err) {
-      setStatus("Error: Connect to Word");
+  useEffect(() => {
+    // Check if running in Word
+    if (window.Office) {
+      setIsWordOnline(true)
+      Office.onReady(() => {
+        setStatus('✅ Connected to Microsoft Word')
+      })
+    } else {
+      setStatus('🌐 Standalone mode - Open in Word Online for full features')
     }
-  };
+  }, [])
+
+  const handleAIAction = (action) => {
+    if (!selectedText) {
+      alert('Please select text from the document first!')
+      return
+    }
+    
+    setStatus(`⚡ Processing ${action}...`)
+    
+    // Simulate AI processing
+    setTimeout(() => {
+      setStatus(`✅ ${action} completed successfully!`)
+      alert(`${action} Result:\n\n"${selectedText.substring(0, 100)}..."\n\n→ AI processed with ${action}`)
+    }, 1500)
+  }
+
+  const openWordOnline = () => {
+    window.open('https://office.com/launch/word', '_blank')
+  }
+
+  const AIButton = ({ icon, title, description, action, color }) => {
+    const colorClasses = {
+      blue: 'from-blue-500 to-blue-600',
+      purple: 'from-purple-500 to-purple-600',
+      green: 'from-green-500 to-green-600',
+      orange: 'from-orange-500 to-orange-600'
+    }
+    
+    return (
+      <button
+        onClick={() => handleAIAction(title)}
+        className="group relative w-full p-6 bg-white rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 text-left overflow-hidden"
+      >
+        {/* Background gradient effect */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${colorClasses[color]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+        
+        <div className="relative z-10">
+          <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${colorClasses[color]} mb-4 flex items-center justify-center group-hover:rotate-12 transition-transform duration-300`}>
+            <i className={`bx ${icon} text-white text-2xl`}></i>
+          </div>
+          
+          <h3 className="text-lg font-bold text-gray-800 mb-2">{title}</h3>
+          <p className="text-sm text-gray-600 mb-4">{description}</p>
+          
+          <div className="flex items-center text-blue-600 font-medium">
+            <span>Try Now</span>
+            <i className="bx bx-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+          </div>
+        </div>
+      </button>
+    )
+  }
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50 text-slate-900 overflow-hidden">
-      
-      {/* RESPONSIVE HEADER */}
-      <header className="bg-blue-700 text-white p-3 sm:p-4 shadow-md">
-        <h1 className="text-xs sm:text-sm font-black tracking-tighter uppercase">Word Automator AI</h1>
-        <p className="text-[10px] opacity-80">{status}</p>
-      </header>
-
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4">
-        {activeTab === 'home' ? (
-          <div className="grid grid-cols-1 gap-3">
-            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Writing Tools</h2>
-            <ActionButton icon="bx-magic-wand" color="bg-blue-500" title="Autocorrect" desc="Fix all errors" onClick={() => handleAction('autocorrect')} />
-            <ActionButton icon="bx-list-plus" color="bg-green-500" title="Autofill" desc="Smart complete" onClick={() => handleAction('autofill')} />
-            <ActionButton icon="bx-copy-alt" color="bg-purple-500" title="Template" desc="JSON structure" onClick={() => handleAction('template')} />
-            <ActionButton icon="bx-bullseye" color="bg-orange-500" title="Summarize" desc="Get key points" onClick={() => handleAction('summarize')} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4">
+      {/* Header */}
+      <div className="glass-card mb-6 animate-fade-in">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <i className="bx bx-bot text-2xl text-white"></i>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Word Automator AI
+              </h1>
+              <p className="text-gray-600 mt-1 flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full ${isWordOnline ? 'animate-pulse bg-green-500' : 'bg-blue-500'}`}></span>
+                {status}
+              </p>
+            </div>
           </div>
-        ) : (
-          <DashboardView />
-        )}
-      </main>
+          
+          <div className="flex gap-3">
+            {!isWordOnline && (
+              <button
+                onClick={openWordOnline}
+                className="btn-primary flex items-center gap-2"
+              >
+                <i className="bx bx-link-external"></i>
+                Open Word Online
+              </button>
+            )}
+            
+            <button
+              onClick={() => setActiveTab(activeTab === 'home' ? 'dashboard' : 'home')}
+              className="btn-secondary flex items-center gap-2"
+            >
+              <i className={`bx ${activeTab === 'dashboard' ? 'bx-home' : 'bx-stats'}`}></i>
+              {activeTab === 'dashboard' ? 'AI Tools' : 'Dashboard'}
+            </button>
+          </div>
+        </div>
+      </div>
 
-      {/* RESPONSIVE NAV */}
-      <nav className="bg-white border-t flex justify-around py-2 sm:py-4 px-2">
-        <NavButton icon="bx-home-alt" label="Tools" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-        <NavButton icon="bx-grid-alt" label="Dashboard" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
-      </nav>
+      {activeTab === 'home' ? (
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Document */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                  <i className="bx bx-file text-blue-500"></i>
+                  Document Preview
+                </h2>
+                <div className="text-sm text-gray-500 flex items-center gap-2">
+                  <i className="bx bx-mouse"></i>
+                  Click to select text
+                </div>
+              </div>
+              
+              <div className="word-document">
+                {documentContent.map((line, idx) => (
+                  <p
+                    key={idx}
+                    onClick={() => setSelectedText(line)}
+                    className={`cursor-pointer p-3 rounded-lg transition-all ${selectedText === line ? 'bg-blue-100 border-l-4 border-blue-500' : 'hover:bg-blue-50'}`}
+                  >
+                    {line || <br />}
+                  </p>
+                ))}
+              </div>
+              
+              {selectedText && (
+                <div className="mt-4 p-4 bg-blue-50/50 rounded-xl border border-blue-200 animate-slide-in">
+                  <p className="text-sm text-blue-800 font-medium">
+                    <i className="bx bx-check-circle mr-2"></i>
+                    Selected: "{selectedText.substring(0, 80)}..."
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* AI Tools */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-gray-800">AI Tools</h2>
+            
+            <AIButton
+              icon="bx-magic-wand"
+              title="Auto-Correct"
+              description="Fix grammar & improve writing style"
+              action="Auto-Correct"
+              color="blue"
+            />
+            
+            <AIButton
+              icon="bx-file-blank"
+              title="Generate Template"
+              description="Create structured documents"
+              action="Template"
+              color="purple"
+            />
+            
+            <AIButton
+              icon="bx-compress"
+              title="Summarize"
+              description="Extract key points automatically"
+              action="Summarize"
+              color="green"
+            />
+            
+            <AIButton
+              icon="bx-analyse"
+              title="Analyze"
+              description="Get writing insights & metrics"
+              action="Analyze"
+              color="orange"
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">📊 Dashboard</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                <h3 className="font-bold text-gray-800 mb-2">System Status</h3>
+                <div className="text-3xl font-bold text-blue-600">Online</div>
+                <p className="text-gray-600 text-sm mt-2">Ready to process</p>
+              </div>
+              
+              <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                <h3 className="font-bold text-gray-800 mb-2">Templates</h3>
+                <div className="text-3xl font-bold text-purple-600">8</div>
+                <p className="text-gray-600 text-sm mt-2">Available templates</p>
+              </div>
+              
+              <div className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+                <h3 className="font-bold text-gray-800 mb-2">Usage</h3>
+                <div className="text-3xl font-bold text-green-600">24</div>
+                <p className="text-gray-600 text-sm mt-2">AI actions today</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="p-6 bg-gray-50 rounded-xl">
+                <h3 className="font-bold text-gray-800 mb-4">Quick Templates</h3>
+                <div className="space-y-3">
+                  {['Business Report', 'Email Draft', 'Meeting Notes', 'Project Proposal'].map(template => (
+                    <button
+                      key={template}
+                      className="w-full p-4 bg-white hover:bg-blue-50 rounded-lg border border-gray-200 hover:border-blue-300 transition-all text-left"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-gray-800">{template}</span>
+                        <i className="bx bx-chevron-right text-gray-400"></i>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="p-6 bg-gray-50 rounded-xl">
+                <h3 className="font-bold text-gray-800 mb-4">Recent Activity</h3>
+                <div className="space-y-3">
+                  {['Auto-Correction applied', 'Template generated', 'Text summarized', 'Document analyzed'].map((activity, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-white rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-gray-700">{activity}</span>
+                      </div>
+                      <span className="text-sm text-gray-500">2 min ago</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  )
 }
 
-// COMPONENT: Responsive Action Cards
-const ActionButton = ({ icon, color, title, desc, onClick }) => (
-  <button 
-    onClick={onClick}
-    className="flex items-center w-full bg-white border border-slate-200 p-3 sm:p-4 rounded-xl hover:shadow-lg transition-all active:scale-95 group"
-  >
-    <div className={`${color} text-white p-2 sm:p-3 rounded-lg mr-4 group-hover:rotate-12 transition-transform`}>
-      <i className={`bx ${icon} text-lg sm:text-2xl`}></i>
-    </div>
-    <div className="text-left">
-      <h3 className="font-bold text-xs sm:text-sm">{title}</h3>
-      <p className="text-[10px] text-slate-400 uppercase font-medium tracking-tight">{desc}</p>
-    </div>
-  </button>
-);
-
-// COMPONENT: Dashboard Sections
-const DashboardView = () => (
-  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-    <section>
-      <h3 className="text-[10px] font-bold text-slate-400 uppercase mb-3">Templates & Rules</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        {['Formal', 'Casual', 'Medical'].map(rule => (
-          <div key={rule} className="bg-white p-3 border rounded-lg text-xs font-semibold flex justify-between items-center">
-            {rule} <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          </div>
-        ))}
-      </div>
-    </section>
-    <section>
-      <h3 className="text-[10px] font-bold text-slate-400 uppercase mb-3">System Logs</h3>
-      <div className="bg-slate-800 text-green-400 p-3 rounded-lg font-mono text-[9px] leading-relaxed shadow-inner">
-        <div>&gt; [08:30] Template Applied</div>
-        <div>&gt; [08:32] Correction Rule Set: Formal</div>
-        <div className="animate-pulse">&gt; [READY] Waiting for input...</div>
-      </div>
-    </section>
-  </div>
-);
-
-const NavButton = ({ icon, label, active, onClick }) => (
-  <button onClick={onClick} className={`flex flex-col items-center gap-1 transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}>
-    <i className={`bx ${icon} text-xl sm:text-2xl`}></i>
-    <span className="text-[9px] font-bold tracking-widest uppercase">{label}</span>
-  </button>
-);
-
-export default App;
+export default App
