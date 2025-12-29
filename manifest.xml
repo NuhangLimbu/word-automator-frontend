@@ -5,25 +5,25 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
            xsi:type="TaskPaneApp">
 
-  <!-- Required Elements -->
   <Id>f9a2b1c0-d3e4-4a5b-8e1c-99f2a4b6c7d9</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>AI Automator</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="AI Word Tools"/>
-  <Description DefaultValue="AI powered document automation."/>
+  <DisplayName DefaultValue="Word Automator AI"/>
+  <Description DefaultValue="AI-powered document automation with auto-correction, templates, summarization, and analysis."/>
+  
   <IconUrl DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-80.png"/>
   
-  <!-- Required: Support URL -->
   <SupportUrl DefaultValue="https://word-automator-frontend.onrender.com"/>
   
-  <!-- Optional: App Domains -->
   <AppDomains>
     <AppDomain>word-automator-frontend.onrender.com</AppDomain>
+    <AppDomain>word-automator-backend.onrender.com</AppDomain>
+    <AppDomain>render.com</AppDomain>
+    <AppDomain>onrender.com</AppDomain>
   </AppDomains>
   
-  <!-- Hosts -->
   <Hosts>
     <Host Name="Document"/>
   </Hosts>
@@ -34,17 +34,14 @@
   
   <Permissions>ReadWriteDocument</Permissions>
   
-  <!-- Version Overrides for 1.1 schema -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
                     xsi:type="VersionOverridesV1_0">
     
     <Hosts>
       <Host xsi:type="Document">
         <DesktopFormFactor>
-          <!-- Function file for UI-less commands -->
           <FunctionFile resid="Commands.Url"/>
           
-          <!-- Primary command surface -->
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <OfficeTab id="TabHome">
               <Group id="CommandsGroup">
@@ -78,10 +75,8 @@
       </Host>
     </Hosts>
     
-    <!-- Resources -->
     <Resources>
       <bt:Images>
-        <!-- FIXED: Should reference correct icon sizes -->
         <bt:Image id="Icon.16x16" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-16.png"/>
         <bt:Image id="Icon.32x32" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-32.png"/>
         <bt:Image id="Icon.80x80" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-80.png"/>
@@ -92,10 +87,10 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="AI Tools"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Open AI Panel"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Word Automator AI"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open AI tools sidebar for document automation"/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open AI-powered document automation tools for auto-correction, templates, summarization, and analysis"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

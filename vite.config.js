@@ -7,12 +7,22 @@ export default defineConfig({
     port: 3000,
     open: true,
     host: true,
-    cors: true
+    cors: true,
+    headers: {
+      'Content-Security-Policy': "frame-ancestors 'self' https://*.office.com https://*.officeapps.live.com;"
+    }
   },
   base: './',
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    emptyOutDir: true
+    sourcemap: false,
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom']
+        }
+      }
+    }
   }
 })
