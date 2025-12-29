@@ -15,7 +15,7 @@ function App() {
         selection.load("text");
         await context.sync();
 
-        const response = await fetch("https://your-backend.onrender.com/process", {
+        const response = await fetch("https://word-automator-backend.onrender.com", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: actionType, text: selection.text })
