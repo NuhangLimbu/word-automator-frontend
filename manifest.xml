@@ -16,7 +16,7 @@
   <HighResolutionIconUrl DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-80.png"/>
   
   <!-- Required: Support URL -->
-  <SupportUrl DefaultValue="https://word-automator-frontend.onrender.com/support"/>
+  <SupportUrl DefaultValue="https://word-automator-frontend.onrender.com"/>
   
   <!-- Optional: App Domains -->
   <AppDomains>
@@ -81,7 +81,8 @@
     <!-- Resources -->
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-32.png"/>
+        <!-- FIXED: Should reference correct icon sizes -->
+        <bt:Image id="Icon.16x16" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-16.png"/>
         <bt:Image id="Icon.32x32" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-32.png"/>
         <bt:Image id="Icon.80x80" DefaultValue="https://word-automator-frontend.onrender.com/assets/icon-80.png"/>
       </bt:Images>
